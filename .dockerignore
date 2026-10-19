@@ -1,0 +1,12 @@
+node_modules
+.next
+.env*
+.git
+.firebase
+.emulator-data
+*-debug.log
+artifacts
+playwright-report
+test-results
+service-account*.json
+.secrets

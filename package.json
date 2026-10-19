@@ -1,0 +1,56 @@
+{
+  "name": "stillvein",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --hostname 0.0.0.0",
+    "dev:local": "node scripts/local.mjs dev",
+    "seed:local": "node scripts/local.mjs seed",
+    "admin:local": "node scripts/local.mjs admin",
+    "build:local": "node scripts/local.mjs build",
+    "start:local": "node scripts/local.mjs start",
+    "build": "next build --webpack",
+    "start": "next start --hostname 0.0.0.0",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:e2e": "playwright test",
+    "seed": "tsx scripts/seed.ts",
+    "provision-admin": "tsx scripts/provision-admin.ts",
+    "emulators": "firebase emulators:start --project demo-stillvein --only auth,firestore"
+  },
+  "dependencies": {
+    "next": "^16.0.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "firebase": "^12.0.0",
+    "firebase-admin": "^14.5.0",
+    "cloudinary": "^2.7.0",
+    "sharp": "^0.35.5",
+    "zod": "^4.0.0",
+    "three": "^0.180.0",
+    "@react-three/fiber": "^9.3.0",
+    "@react-three/drei": "^10.7.0",
+    "lucide-react": "^0.468.0",
+    "papaparse": "^5.5.0"
+  },
+  "overrides": {
+    "@grpc/grpc-js": "^1.14.6",
+    "sharp": "$sharp"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.0",
+    "@types/node": "^24.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@types/three": "^0.180.0",
+    "@types/papaparse": "^5.3.0",
+    "eslint": "^9.0.0",
+    "eslint-config-next": "^16.0.0",
+    "vitest": "^5.0.5",
+    "tsx": "^4.20.0",
+    "@playwright/test": "^1.56.0",
+    "@firebase/rules-unit-testing": "^5.0.0",
+    "firebase-tools": "^15.34.0"
+  }
+}
