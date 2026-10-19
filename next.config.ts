@@ -2,8 +2,11 @@ import type { NextConfig } from 'next';
 const config: NextConfig = {
   poweredByHeader: false,
   outputFileTracingRoot: process.cwd(),
+  // Bundle Firebase Auth's ESM key-verification dependency rather than leaving
+  // a CJS require('jose') for Vercel's instrumented runtime. No crypto downgrade.
+  transpilePackages: ['firebase-admin', 'jwks-rsa', 'jose'],
+  serverExternalPackages: ['@google-cloud/firestore', '@google-cloud/storage'],
   // Webpack development source maps require eval. It is never allowed in production.
-  serverExternalPackages: ['firebase-admin'],
   async headers() {
     return [
       {
