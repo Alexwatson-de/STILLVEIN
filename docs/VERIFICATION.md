@@ -4,7 +4,15 @@ Date: 19 October 2026. Targets: isolated Firebase emulators, the optimized local
 
 ## Vercel hosted acceptance
 
-### Whole-site UI redesign regression
+### Scroll-experience correction
+
+The owner rejected the earlier color-focused green design. It has been replaced with a neutral charcoal/ivory stone palette and a genuine scroll-driven WebGL presentation: slab rotation, camera travel, reversible countertop side assembly, background/copy crossfades, sticky-stage pin/release and section reveals. The old green theme stylesheet and static hero are removed.
+
+**102 automated tests and 22 browser workflows passed** on the optimized local build. The eight new pure tests validate deterministic choreography; four new browser tests inspect actual scene poses and canvas pixels at multiple scroll positions, reverse the motion, exercise mobile scrolling and verify reduced-motion/WebGL fallbacks. The original functional suites remain intact. Lint, TypeScript, production build and production dependency audit pass.
+
+Desktop/mobile Surface, Detail and Space screenshots were visually reviewed. The mobile camera was widened and lowered in composition to avoid cropping or overlapping copy. The existing functional material studio renderer, saved product settings, APIs, data, roles and upload policy were not changed. See [UI-REDESIGN.md](UI-REDESIGN.md).
+
+### Earlier whole-site UI redesign regression (superseded visually)
 
 The Corn Revolution-inspired visual update is documented in [UI-REDESIGN.md](UI-REDESIGN.md). Before deployment, all **94 automated tests** and **18 browser workflows** passed against the optimized local build. The added UI coverage checks nine public/login routes at four widths (360/390/768/1440), all administrative sections, actual product/preview content, keyboard skip navigation, enquiry dialog dismissal and reduced motion. Screenshots were inspected; one mobile form overflow was corrected.
 

@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import './globals.css';
-import './revolution.css';
+import './stone-experience.css';
 import { CinematicAtmosphere } from '@/components/cinematic-atmosphere';
 export const dynamic = 'force-dynamic';
 import { settings } from '@/lib/server/data';
@@ -17,7 +17,7 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" data-scroll-behavior="smooth">
       <body>
         <a className="skip-link" href="#main">
           Skip to content

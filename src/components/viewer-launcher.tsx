@@ -34,7 +34,7 @@ export function ViewerLauncher({ product, auto = false }: { product: Product; au
         minHeight: 340,
         display: 'grid',
         placeItems: 'center',
-        backgroundImage: `linear-gradient(#08150dc4,#09150db0),url('${imageUrl(product.texture.url, 800)}')`,
+        backgroundImage: `linear-gradient(#211e19c4,#211f1ab0),url('${imageUrl(product.texture.url, 800)}')`,
         backgroundSize: 'cover',
       }}
     >

@@ -23,7 +23,7 @@ test.afterAll(async () => {
   }
 });
 
-test('all public pages use the dark UI without overflow at phone, tablet and desktop widths', async ({
+test('all public pages use the neutral stone UI without overflow at phone, tablet and desktop widths', async ({
   page,
 }) => {
   test.setTimeout(180000);
@@ -49,7 +49,7 @@ test('all public pages use the dark UI without overflow at phone, tablet and des
         await page.evaluate(() =>
           getComputedStyle(document.documentElement).getPropertyValue('--paper').trim(),
         ),
-      ).toBe('#090e0c');
+      ).toBe('#f3f0e9');
     }
   }
 });
@@ -59,7 +59,8 @@ test('reduced motion, keyboard navigation and enquiry dialog remain accessible',
 }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto('/');
-  await expect(page.locator('.hero-specimen')).toHaveCSS('animation-name', 'none');
+  await expect(page.locator('.stone-journey')).toHaveAttribute('data-reduced', 'true');
+  await expect(page.locator('.journey-pin')).toHaveCSS('position', 'relative');
   await page.keyboard.press('Tab');
   await expect(page.getByRole('link', { name: 'Skip to content', exact: true })).toBeFocused();
   await page.keyboard.press('Enter');

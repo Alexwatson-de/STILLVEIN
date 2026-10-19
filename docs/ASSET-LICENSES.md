@@ -32,8 +32,12 @@ DM Sans and DM Serif Display are self-hosted Google Fonts, under the SIL Open Fo
 
 Font license texts are included alongside the downloaded font files. No font-provider request is needed at runtime.
 
-The reference-inspired UI uses self-hosted Barlow Condensed (SIL Open Font License),
-internally aliased as Mineral Display. The original font and license source is
-https://github.com/google/fonts/tree/main/ofl/barlowcondensed. No Resn/Pioneer
-images, fonts, models or proprietary code are reused. The Corn Revolution site
-was consulted for atmosphere, visual hierarchy and composition only.
+The earlier green UI experiment included self-hosted Barlow Condensed (OFL),
+aliased as Mineral Display. Those licensed files remain in the repository but
+are not loaded by the current neutral stone experience, which uses DM Sans and
+DM Serif Display. Original Barlow source/license:
+https://github.com/google/fonts/tree/main/ofl/barlowcondensed.
+
+No Resn/Pioneer images, fonts, models or proprietary code are reused. The Corn
+Revolution site informs scroll choreography and cinematic transitions; the new
+WebGL slab/countertop geometry and motion are authored within this application.

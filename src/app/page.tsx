@@ -13,6 +13,7 @@ import { ProductCard } from '@/components/product-card';
 import { catalog, settings, taxonomy, featuredProducts } from '@/lib/server/data';
 import { defaultSettings, Product, Taxonomy } from '@/lib/schema';
 import { imageUrl } from '@/lib/catalog';
+import { StoneJourney } from '@/components/stone-journey';
 export const dynamic = 'force-dynamic';
 export default async function Home() {
   let config = defaultSettings;
@@ -38,100 +39,7 @@ export default async function Home() {
     <>
       <Header settings={config} />
       <main id="main">
-        <section className="hero">
-          <div className="hero-coordinate" aria-hidden="true">
-            <span>01 / MATERIAL ATLAS</span>
-            <span>TEXTURE · FORM · PERSPECTIVE</span>
-          </div>
-          <div className="hero-copy">
-            <div className="eyebrow">
-              <span className="fine-line" /> NATURE, WITH A NEW PERSPECTIVE
-            </div>
-            <h1>
-              {config.heroTitle.split('\n').map((line, i) => (
-                <span key={line} className={i ? 'serif-italic' : ''}>
-                  {line}
-                </span>
-              ))}
-            </h1>
-            <p>{config.heroDescription}</p>
-            <div className="hero-actions">
-              <Link href="/collection" className="button dark">
-                Explore the collection <ArrowUpRight size={18} />
-              </Link>
-              <Link href="/studio" className="button text">
-                <Box size={18} /> View in 3D
-              </Link>
-            </div>
-            <div className="hero-foot">
-              <span className="mini-orbit">◎</span>
-              <span>
-                Formed by nature.
-                <br />
-                <strong>Considered by you.</strong>
-              </span>
-              <span className="hero-foot-line" />
-              <span>
-                REAL TEXTURES
-                <br />
-                <strong>Infinite possibilities.</strong>
-              </span>
-            </div>
-          </div>
-          <div className="hero-art">
-            <div className="specimen-orbit orbit-one" aria-hidden="true" />
-            <div className="specimen-orbit orbit-two" aria-hidden="true" />
-            {hero ? (
-              <div className="hero-specimen">
-                <img
-                  className="hero-stone"
-                  src={imageUrl(hero.url, 1800)}
-                  alt={hero.alt}
-                  fetchPriority="high"
-                />
-                <div className="specimen-edge" aria-hidden="true" />
-              </div>
-            ) : (
-              <div className="image-fallback">Your material collection begins here.</div>
-            )}
-            <div className="hero-frame" />
-            {products[1]?.galleryImages[0] && (
-              <div
-                className="satellite-stone"
-                aria-hidden="true"
-                style={{
-                  backgroundImage: `url('${imageUrl(products[1].galleryImages[0].url, 600)}')`,
-                }}
-              />
-            )}
-            <span className="hero-art-label">THE MATERIAL STUDY — 001</span>
-            <div className="hero-art-card">
-              <span className="eyebrow">IN FOCUS</span>
-              <h2>{products[0]?.name || 'A study in natural detail'}</h2>
-              <p>
-                {products[0]
-                  ? `${products[0].stoneType} / ${products[0].finish}`
-                  : 'Texture. Light. Dimension.'}
-              </p>
-              <Link
-                href={products[0] ? `/materials/${products[0].slug}` : '/collection'}
-                aria-label="Explore featured material"
-              >
-                <ArrowUpRight size={24} />
-              </Link>
-            </div>
-            <div className="vertical-caption">EVERY VEIN TELLS A DIFFERENT STORY</div>
-          </div>
-          <a className="hero-scroll-cue" href="#curated-collection">
-            <span className="scroll-ring">↓</span>
-            <span>SCROLL TO DISCOVER</span>
-          </a>
-          <div className="hero-chapter" aria-hidden="true">
-            <span>01</span>
-            <i />
-            <span>03</span>
-          </div>
-        </section>
+        <StoneJourney product={products[0]} hero={hero} settings={config} />
         <div className="editorial-strip">
           <span>AN INDEPENDENT MATERIAL LIBRARY</span>
           <span>Natural variation. Extraordinary character.</span>

@@ -1,55 +1,79 @@
 'use client';
-// Presentation only. No navigation interception, scroll-jacking or data access.
-// The natural scroll position and all native pointer/keyboard controls remain intact.
+// Progressive, presentation-only scrolling enhancements. Native wheel/touch,
+// keyboard navigation and all application interactions are never intercepted.
 import { useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 export function CinematicAtmosphere() {
   const pathname = usePathname();
   useEffect(() => {
-    const media = window.matchMedia('(prefers-reduced-motion: reduce)');
-    if (media.matches) return;
-    const hero = document.querySelector<HTMLElement>('.hero');
-    if (!hero) return;
+    const media = matchMedia('(prefers-reduced-motion: reduce)');
+    const main = document.querySelector<HTMLElement>('#main');
+    if (!main || main.classList.contains('admin-main')) return;
+    const tracked = new Set<HTMLElement>();
     let frame = 0;
-    let x = 0;
-    let y = 0;
-    let scroll = 0;
-    const paint = () => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            const node = entry.target as HTMLElement;
+            node.dataset.scrollReveal = 'visible';
+            observer.unobserve(node);
+          }
+        }
+      },
+      { threshold: 0.04, rootMargin: '0px 0px -24px 0px' },
+    );
+    const collect = () => {
+      const candidates = main.querySelectorAll<HTMLElement>(
+        '.section-heading,.product-card,.applications>a,.studio-feature-copy>*,.contact-side',
+      );
+      candidates.forEach((node, index) => {
+        if (tracked.has(node)) return;
+        tracked.add(node);
+        node.style.setProperty(
+          '--reveal-delay',
+          `${node.classList.contains('product-card') ? (index % 3) * 65 : 0}ms`,
+        );
+        node.dataset.scrollReveal = media.matches ? 'visible' : 'pending';
+        if (!media.matches) observer.observe(node);
+      });
+    };
+    const motionPreference = () => {
+      if (media.matches) {
+        tracked.forEach((node) => (node.dataset.scrollReveal = 'visible'));
+        observer.disconnect();
+      }
+    };
+    const parallax = () => {
       frame = 0;
-      hero.style.setProperty('--drift-x', `${x}px`);
-      hero.style.setProperty('--drift-y', `${y}px`);
-      hero.style.setProperty('--hero-scroll', `${scroll}px`);
-    };
-    const schedule = () => {
-      if (!frame) frame = requestAnimationFrame(paint);
-    };
-    const pointer = (event: PointerEvent) => {
-      if (event.pointerType !== 'mouse') return;
-      const rect = hero.getBoundingClientRect();
-      x = (event.clientX / innerWidth - 0.5) * 14;
-      y = ((event.clientY - rect.top) / rect.height - 0.5) * 10;
-      schedule();
-    };
-    const leave = () => {
-      x = 0;
-      y = 0;
-      schedule();
+      if (media.matches) return;
+      const art = main.querySelector<HTMLElement>('.studio-feature-art');
+      if (!art) return;
+      const rect = art.getBoundingClientRect();
+      if (rect.bottom < 0 || rect.top > innerHeight) return;
+      art.style.setProperty(
+        '--section-drift',
+        `${Math.max(-35, Math.min(35, (innerHeight / 2 - rect.top - rect.height / 2) * 0.08))}px`,
+      );
     };
     const onScroll = () => {
-      scroll = Math.min(70, Math.max(0, -hero.getBoundingClientRect().top * 0.12));
-      schedule();
+      if (!frame) frame = requestAnimationFrame(parallax);
     };
-    hero.addEventListener('pointermove', pointer, { passive: true });
-    hero.addEventListener('pointerleave', leave);
+    collect();
+    const mutations = new MutationObserver(collect);
+    mutations.observe(main, { childList: true, subtree: true });
     window.addEventListener('scroll', onScroll, { passive: true });
+    media.addEventListener('change', motionPreference);
     return () => {
+      observer.disconnect();
+      mutations.disconnect();
       cancelAnimationFrame(frame);
-      hero.removeEventListener('pointermove', pointer);
-      hero.removeEventListener('pointerleave', leave);
       window.removeEventListener('scroll', onScroll);
-      hero.style.removeProperty('--drift-x');
-      hero.style.removeProperty('--drift-y');
-      hero.style.removeProperty('--hero-scroll');
+      media.removeEventListener('change', motionPreference);
+      tracked.forEach((node) => {
+        delete node.dataset.scrollReveal;
+        node.style.removeProperty('--reveal-delay');
+      });
     };
   }, [pathname]);
   return <div className="ambient-grain" aria-hidden="true" />;
