@@ -6,7 +6,11 @@ A standalone natural-stone catalog, specification and interactive material-visua
 
 Implemented and verified with Firebase emulators **and actual Firebase/Cloudinary services**. The dedicated `stillvein` Firebase project now has a default `nam5` database, deployed deny-by-default rules/indexes, a scoped server identity and the approved initial administrator. Billing remains disabled. Real browser gallery/texture uploads, Cloudinary delivery, Firestore references, interactive 3D rendering and safe cleanup passed a live-service smoke test.
 
-Source repository: https://github.com/Alexwatson-de/STILLVEIN. The optimized app runs locally at http://localhost:3000 using the real services; it is **not publicly hosted**. At the owner's request, six clearly labelled sample materials with real Cloudinary textures and two synthetic enquiries are now retained in the connected database. Owner-entered materials are preserved. The separate emulator sample database remains available via `:local` scripts. Hosting approval, domain/HTTPS setup, policy review and hosted acceptance checks remain release gates.
+**Hosted demo:** https://stillvein.vercel.app · **Staff dashboard:** https://stillvein.vercel.app/admin
+
+Source repository: https://github.com/Alexwatson-de/STILLVEIN. GitHub `main` is connected to Vercel production deployments. The owner explicitly confirmed personal, non-commercial demo use on the existing Hobby team; no paid plan or Firebase billing was enabled. Real hosted admin login, Cloudinary upload/delivery, 3D rendering, enquiry persistence and security checks passed. New hosted uploads are limited to **4 MB / 25 MP** to stay below Vercel's 4.5 MB request ceiling; existing higher-resolution images remain intact. Local unrestricted hosting defaults to 10 MB.
+
+Six clearly labelled sample materials and two synthetic enquiries remain in the connected database. Owner-entered materials are preserved. Local development and the separate emulator database remain available through the documented scripts. Commercial use requires an eligible plan and renewed policy/operational review.
 
 ### Connected sample demonstration
 
@@ -128,10 +132,10 @@ Normal production deployment uses `npm run build` / `npm start`, **not** the `:l
 
 ## Scope limits and outstanding release work
 
-- Real upload/delivery, server identity, database writes and 3D texture rendering are verified from the local optimized server. Hosted ingress limits, production domain authorization, email delivery to the recipient and full hosted acceptance still need verification.
+- Real hosted upload/delivery, Firebase domain authorization, server identity, database writes and 3D rendering are verified. Recipient inbox delivery, physical-mobile GPU behavior, comprehensive accessibility/load testing and operational monitoring remain outside this verification.
 - Search uses a bounded server scan rather than a dedicated full-text service. Relevance ranks the newest 1,000 candidates; other sorts can continue scanning. The UI does not mislabel catalog size as an exact filtered total. Add a search index for large catalogs.
 - Admin search/filter/export covers loaded pages; some small-catalog pickers have documented caps. These limits are visible and detailed in the schema document.
 - No AI image processing, automatic texture cropping, PDF spec generation, email notification provider, measured popularity ranking or true stone reconstruction is included. The specification download is text. None is silently represented as working.
 - Data deletion/retention operations for privacy requests require the operator's approved procedure. Review the default policy text, backups, ingress abuse controls and dependency advisories before launch.
 - Development-only transitive advisories remain in upstream tooling; the production dependency audit is clean. See verification notes rather than treating the whole toolchain as vulnerability-free.
-- The supplied Dockerfile is a deployment recipe; no Docker build or external hosting deployment has been executed. No hosting plan was purchased or upgraded, and Firebase billing remains disabled.
+- Vercel Hobby hosts the explicitly confirmed personal, non-commercial demo. No hosting plan was purchased or upgraded, and Firebase billing remains disabled. The alternative Docker recipe has not been executed.

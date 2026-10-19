@@ -1,10 +1,18 @@
 # Deployment and service configuration
 
-## Current gate
+## Current hosted deployment
 
-No public hosting deployment has been performed. The approved dedicated `stillvein` Firebase project is initialized in `nam5`, with deployed deny-by-default rules/indexes and a dedicated `stillvein-server` service account limited to `roles/datastore.user` and `roles/firebaseauth.admin`. The initial administrator was provisioned and Firebase accepted a password-setup email request. Cloudinary's Free account and signed `stillvein_signed` preset are configured; real image upload/delivery, database references, 3D rendering and deletion were verified. Synthetic test records and images were removed. No other project's credentials were reused and billing remains disabled.
+STILLVEIN is hosted at **https://stillvein.vercel.app**, with staff access at **/admin**. The owner explicitly selected personal, non-commercial demo use on the existing Vercel Hobby team (`dhruv-820e`). The Vercel project is connected to `Alexwatson-de/STILLVEIN`, production branch `main`, Next.js with Node.js 24. Paid plans were not enabled. Hobby must not be used for commercial operation.
 
-Local server credentials live in the ignored, mode-0700 `.secrets` directory (key mode 0600), referenced by `GOOGLE_APPLICATION_CREDENTIALS`. Both Git and Docker exclude it. Transfer credentials through the selected host's secret manager, never through Git. Rotate credentials shared in chat before public release.
+The dedicated `stillvein` Firebase project remains in `nam5`, with deny-by-default rules/indexes and the scoped server identity. Firebase billing remains disabled. The production domain was added to Firebase Auth authorized domains without removing existing domains. Hosted browser sign-in, actual Cloudinary gallery/texture uploads, Firestore persistence, 3D drawing, enquiries and cleanup passed. Temporary hosted test assets/accounts were removed; previously requested sample data and owner materials remain.
+
+Fifteen production-only environment variables are stored in Vercel; private credentials use sensitive values. The local credential file path and emulator variables are never deployed. Preview environments intentionally have no production secrets. GitHub pushes to `main` trigger production builds.
+
+Hosted upload policy: `NEXT_PUBLIC_MAX_IMAGE_MB=4` at build and runtime. Vercel Functions accept at most 4.5 MB request bodies; a 4 MB cap is validated by the UI, ticket schema, bounded binary stream and final provider metadata check. A real 4 MB + 1-byte transfer was rejected by the application with 413, and an under-limit 2048-pixel JPEG succeeded. Original existing assets are not recompressed or deleted.
+
+Two Vercel-only integration fixes were required: complete the optional dependency lock entries for the clean npm install, and bundle Firebase Admin/JWKS/JOSE with Next so Vercel's instrumented runtime does not attempt a CJS require of an external ESM module. No cryptography downgrade or authorization bypass was introduced.
+
+Local server credentials live in the ignored, mode-0700 `.secrets` directory (key mode 0600), referenced by `GOOGLE_APPLICATION_CREDENTIALS`. Git, Docker and Vercel upload exclusions protect this directory. The hosted server receives `FIREBASE_SERVICE_ACCOUNT_JSON` through Vercel's sensitive production environment, never Git. Rotate credentials shared in chat; no automatic rotation was performed.
 
 Choose an authorized hosting environment that supports Node.js 24, Next.js server routes and the intended commercial use. Do not deploy a commercial platform to a plan that prohibits commercial use. Obtain explicit approval before purchasing a plan or enabling Firebase/Cloudinary billing. Static-only hosting is insufficient.
 
@@ -51,7 +59,7 @@ Create a **signed** image upload preset, for example `stillvein_signed`:
 - no overwrite; avoid preset folder transformations that contradict signed public IDs;
 - review account-level 25-megapixel limit, delivery restrictions and upload quotas.
 
-The server verifies that the preset is signed, allows only approved raster formats and disables overwrite. The browser receives only an owned, expiring ticket, never a reusable Cloudinary signature. It transfers raw bytes to the authenticated server, which caps the actual stream at 10 MB, checks raster magic bytes, validates MIME/format and fully decodes within a 25-megapixel limit. Only then does the Cloudinary SDK sign and send the image. Assets live under:
+The server verifies that the preset is signed, allows only approved raster formats and disables overwrite. The browser receives only an owned, expiring ticket, never a reusable Cloudinary signature. It transfers raw bytes to the authenticated server, which caps the actual stream at the deployment limit (4 MB on Vercel, 10 MB local default), checks raster magic bytes, validates MIME/format and fully decodes within a 25-megapixel limit. Only then does the Cloudinary SDK sign and send the image. Assets live under:
 
 - `stillvein/products/{product-id}/gallery/{uuid}`
 - `stillvein/products/{product-id}/textures/{uuid}`
@@ -59,7 +67,7 @@ The server verifies that the preset is signed, allows only approved raster forma
 
 After the validated server-signed transfer, finalization queries Cloudinary by the fixed public ID, validates its real metadata and registers the asset. Only then may a product reference it. Failed uploads do not alter existing product images. Cancellation stops the browser request; an already-started provider transfer may leave an unreferenced asset for authorized reconciliation. Tickets expire after one hour and are reserved before transfer to prevent concurrent reuse. Do not delete provider assets manually without checking the registry.
 
-The hosting ingress must support the advertised 10 MB binary body and adequate transfer time. Hosts with smaller serverless request-body limits need a separate authenticated upload service or a lower explicitly advertised limit; do not bypass server validation by exposing signatures again.
+The hosting ingress must support the advertised binary body and transfer time. Vercel uses the explicitly displayed 4 MB limit. Larger hosted uploads require a separately approved authenticated upload service; do not bypass validation by exposing signatures again. Saving a JPEG/WebP below 4 MB can retain its 2048-pixel dimensions without requiring geometry or material changes.
 
 ### Free-plan check (researched 19 October 2026)
 
@@ -77,10 +85,12 @@ Large/high-traffic libraries can exhaust free allowances quickly. Inspect usage 
 ## 3. Hosting environment
 
 - `NEXT_PUBLIC_SITE_URL`: exact canonical HTTPS origin; also used for request-origin checks.
+- `NEXT_PUBLIC_MAX_IMAGE_MB`: 4 on Vercel, 10 on unrestricted local hosts; keep build/runtime values identical.
 - Public Firebase variables must be supplied **at build time**. Changing them requires a rebuild.
 - Server Firebase/Cloudinary variables are runtime secrets; never `NEXT_PUBLIC_*` or `VITE_*`.
 - `RATE_LIMIT_SECRET`: unique cryptographically random secret of at least 32 characters.
 - `TRUST_PROXY=true`: only behind an ingress known to overwrite `x-forwarded-for`; otherwise configure a safe trusted-client-IP strategy before launch.
+- Vercel's direct ingress overwrites `x-forwarded-for` to prevent spoofing, so the production deployment enables `TRUST_PROXY`. See https://vercel.com/docs/headers/request-headers.
 - Remove `FIRESTORE_EMULATOR_HOST`, `FIREBASE_AUTH_EMULATOR_HOST`, `NEXT_PUBLIC_FIREBASE_AUTH_EMULATOR_URL` and `ALLOW_LOCAL_PRODUCTION_TEST` from production. Non-demo emulator combinations are rejected.
 - Configure HTTPS, server timeouts, request-body limits and platform-level rate limiting. Public filtered reads are intentionally not cached until a safe published-data invalidation strategy is added.
 

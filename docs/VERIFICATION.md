@@ -1,6 +1,23 @@
 # Verification report
 
-Date: 19 October 2026. Targets: isolated Firebase emulators, plus the optimized local server connected to the authorized real `stillvein` Firebase project and Cloudinary account. **No public hosting deployment has been performed.**
+Date: 19 October 2026. Targets: isolated Firebase emulators, the optimized local server and the hosted Vercel demo connected to the authorized real `stillvein` Firebase project and Cloudinary account.
+
+## Vercel hosted acceptance
+
+Live demo: **https://stillvein.vercel.app**. The owner explicitly confirmed personal, non-commercial use on the existing Hobby team; no paid upgrade or Firebase billing enablement occurred. Successful application deployment source: `8aa4360` (subsequent documentation-only commits may redeploy the same code).
+
+Executed on the actual public HTTPS origin:
+
+- Homepage, collection, material detail, admin login and catalog API return 200. Anonymous admin API requests return 401.
+- Real synthetic staff sign-in through Firebase, gallery upload and 2048 x 2048 texture upload through Vercel, Cloudinary delivery and Firestore references all succeeded.
+- Both browser validation and an actual over-limit binary transfer enforce the hosted 4 MB limit. The server returned application-level 413 for 4 MB + 1 byte. Forged image bytes were rejected without altering the existing texture.
+- Interactive WebGL countertop renders the actual Cloudinary texture. Mesh-draw readiness and centre-canvas pixel variance confirmed geometry rather than a blank canvas.
+- Product enquiry submitted through the hosted browser persists with the correct material ID. Cross-origin privileged writes return 403. Canonical sitemap URLs use the production origin, not localhost.
+- Desktop and 390px mobile browsing passed; mobile Marble + Polished filters returned the two sample materials without horizontal overflow. Zero uncaught browser errors in the visual-review run.
+- Synthetic hosted staff, product, category, enquiry and Cloudinary images were removed; audit events retained. Owner records and the requested sample demonstration data were preserved.
+- 59 focused unit tests pass (46 catalog/schema, 10 image-validation, 3 deployment upload-policy), plus lint/type checking and Vercel's optimized build. Production dependency audit remains at zero vulnerabilities.
+
+Initial Vercel clean-install and CJS/ESM runtime errors were investigated and repaired, not treated as successful deployments. The repaired lockfile includes optional platform dependencies, and Firebase/JWKS/JOSE are bundled for the hosted runtime without downgrading token verification.
 
 ## Live-service follow-up
 
@@ -73,9 +90,9 @@ Production installation excludes these dev-only packages. Do not process untrust
 
 ## Not verified / outstanding
 
-- Actual delivery of the password-setup email to the recipient and full hosted-domain Auth configuration; only Firebase's acceptance of the email request is verified.
-- Hosting-specific binary body limits, runtime secret injection, TLS and live monitoring. The real-service upload/3D test used the local server, not an externally deployed host.
-- A deployed hosting URL, commercial-plan eligibility, infrastructure abuse controls, backups and restore exercise. No external deployment occurred.
+- Actual delivery of the password-setup email to the recipient; hosted Firebase sign-in and domain authorization are verified, but inbox receipt is not.
+- Long-duration monitoring, sustained abuse/load testing, backups and restore exercises. Hosted runtime secrets, HTTPS and upload-body limits were exercised successfully.
+- Commercial operation is not authorized by the current Hobby deployment; an eligible commercial plan would be required separately.
 - Safari/iOS/Android physical-device touch behavior, fullscreen variants and GPU memory/thermal behavior. Headless Chromium used software WebGL; it is not a real mobile GPU certification.
 - A completed WCAG audit, load/performance benchmarks or penetration test. Basic focus/labels/reduced motion/responsive behavior exist, but these do not replace specialist audits.
 - Optional email/AI/image-preparation/PDF/popularity services are not implemented. Core enquiry persistence does not depend on them.
