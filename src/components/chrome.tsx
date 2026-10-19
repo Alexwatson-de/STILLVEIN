@@ -5,8 +5,10 @@ export function Header({ settings = defaultSettings }: { settings?: SiteSettings
   return (
     <header className="header">
       <Link className="wordmark" href="/" aria-label={`${settings.brand} home`}>
-        <span className="brand-mark">
-          S<span>/</span>
+        <span className="brand-mark" aria-hidden="true">
+          <i />
+          <i />
+          <i />
         </span>
         <span>
           {settings.brand}
@@ -80,6 +82,10 @@ export function Footer({ settings = defaultSettings }: { settings?: SiteSettings
           <Link href="/terms">Terms</Link>
           <Link href="/admin">Staff access</Link>
         </span>
+      </div>
+      <div className="footer-wordmark" aria-hidden="true">
+        {settings.brand}
+        <span>®</span>
       </div>
     </footer>
   );

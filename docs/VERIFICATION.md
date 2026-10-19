@@ -4,6 +4,12 @@ Date: 19 October 2026. Targets: isolated Firebase emulators, the optimized local
 
 ## Vercel hosted acceptance
 
+### Whole-site UI redesign regression
+
+The Corn Revolution-inspired visual update is documented in [UI-REDESIGN.md](UI-REDESIGN.md). Before deployment, all **94 automated tests** and **18 browser workflows** passed against the optimized local build. The added UI coverage checks nine public/login routes at four widths (360/390/768/1440), all administrative sections, actual product/preview content, keyboard skip navigation, enquiry dialog dismissal and reduced motion. Screenshots were inspected; one mobile form overflow was corrected.
+
+The patch does not modify APIs, database records/schemas/rules, provider configuration, role logic, upload limits, or the interactive renderer's geometry/settings. Existing text and admin-configurable content remain unchanged. Display case, colors, font, spacing, composition and decorative motion are presentation concerns only.
+
 Live demo: **https://stillvein.vercel.app**. The owner explicitly confirmed personal, non-commercial use on the existing Hobby team; no paid upgrade or Firebase billing enablement occurred. Successful application deployment source: `8aa4360` (subsequent documentation-only commits may redeploy the same code).
 
 Executed on the actual public HTTPS origin:

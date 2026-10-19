@@ -29,12 +29,12 @@ export function ViewerLauncher({ product, auto = false }: { product: Product; au
   if (active) return <Viewer key={product.id} product={product} />;
   return (
     <div
-      className="viewer"
+      className="viewer viewer-launcher"
       style={{
         minHeight: 340,
         display: 'grid',
         placeItems: 'center',
-        backgroundImage: `linear-gradient(#efeee8ab,#efeee8ab),url('${imageUrl(product.texture.url, 800)}')`,
+        backgroundImage: `linear-gradient(#08150dc4,#09150db0),url('${imageUrl(product.texture.url, 800)}')`,
         backgroundSize: 'cover',
       }}
     >

@@ -39,6 +39,10 @@ export default async function Home() {
       <Header settings={config} />
       <main id="main">
         <section className="hero">
+          <div className="hero-coordinate" aria-hidden="true">
+            <span>01 / MATERIAL ATLAS</span>
+            <span>TEXTURE · FORM · PERSPECTIVE</span>
+          </div>
           <div className="hero-copy">
             <div className="eyebrow">
               <span className="fine-line" /> NATURE, WITH A NEW PERSPECTIVE
@@ -75,17 +79,31 @@ export default async function Home() {
             </div>
           </div>
           <div className="hero-art">
+            <div className="specimen-orbit orbit-one" aria-hidden="true" />
+            <div className="specimen-orbit orbit-two" aria-hidden="true" />
             {hero ? (
-              <img
-                className="hero-stone"
-                src={imageUrl(hero.url, 1800)}
-                alt={hero.alt}
-                fetchPriority="high"
-              />
+              <div className="hero-specimen">
+                <img
+                  className="hero-stone"
+                  src={imageUrl(hero.url, 1800)}
+                  alt={hero.alt}
+                  fetchPriority="high"
+                />
+                <div className="specimen-edge" aria-hidden="true" />
+              </div>
             ) : (
               <div className="image-fallback">Your material collection begins here.</div>
             )}
             <div className="hero-frame" />
+            {products[1]?.galleryImages[0] && (
+              <div
+                className="satellite-stone"
+                aria-hidden="true"
+                style={{
+                  backgroundImage: `url('${imageUrl(products[1].galleryImages[0].url, 600)}')`,
+                }}
+              />
+            )}
             <span className="hero-art-label">THE MATERIAL STUDY — 001</span>
             <div className="hero-art-card">
               <span className="eyebrow">IN FOCUS</span>
@@ -104,6 +122,15 @@ export default async function Home() {
             </div>
             <div className="vertical-caption">EVERY VEIN TELLS A DIFFERENT STORY</div>
           </div>
+          <a className="hero-scroll-cue" href="#curated-collection">
+            <span className="scroll-ring">↓</span>
+            <span>SCROLL TO DISCOVER</span>
+          </a>
+          <div className="hero-chapter" aria-hidden="true">
+            <span>01</span>
+            <i />
+            <span>03</span>
+          </div>
         </section>
         <div className="editorial-strip">
           <span>AN INDEPENDENT MATERIAL LIBRARY</span>
@@ -117,7 +144,7 @@ export default async function Home() {
             <ServiceNotice message={error} />
           </div>
         )}
-        <section className="section collection-section">
+        <section className="section collection-section" id="curated-collection">
           <div className="section-heading">
             <div>
               <span className="eyebrow">01 / THE COLLECTION</span>

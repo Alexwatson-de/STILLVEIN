@@ -4,6 +4,12 @@ A standalone natural-stone catalog, specification and interactive material-visua
 
 ## Delivery status
 
+### Reference-inspired interface
+
+The entire public site and staff dashboard now use the **Mineral Revolution** visual system: deep black/forest-green backgrounds, oversized condensed typography, sculptural material imagery, subtle pointer/scroll atmosphere and technical-style controls. It is inspired by Resn's Corn Revolution, using STILLVEIN's own existing content and licensed photography. No reference-site assets are copied.
+
+This is a presentation-only change. All data, routes, forms, catalogue operations, uploads, roles, enquiries, CSV behavior and saved 3D settings are retained. The original 14 browser workflows plus four new whole-site UI regressions pass; all 94 automated tests pass. See [redesign scope and verification](docs/UI-REDESIGN.md).
+
 Implemented and verified with Firebase emulators **and actual Firebase/Cloudinary services**. The dedicated `stillvein` Firebase project now has a default `nam5` database, deployed deny-by-default rules/indexes, a scoped server identity and the approved initial administrator. Billing remains disabled. Real browser gallery/texture uploads, Cloudinary delivery, Firestore references, interactive 3D rendering and safe cleanup passed a live-service smoke test.
 
 **Hosted demo:** https://stillvein.vercel.app · **Staff dashboard:** https://stillvein.vercel.app/admin
@@ -40,6 +46,7 @@ Next.js App Router + React + TypeScript; shared authored CSS design system; Fire
 
 - `src/app`: server-rendered public pages and API routes.
 - `src/components`: accessible public UI, studio and administrative panels.
+- `src/app/revolution.css`: reference-inspired presentation layer; structural CSS and business logic remain separate.
 - `src/lib/schema.ts`: shared validated domain contracts.
 - `src/lib/server`: database, authorization, upload, enquiry and reporting logic.
 - `scripts`: emulator-only sample seeding and trusted first-admin provisioning.

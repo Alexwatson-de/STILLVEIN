@@ -13,3 +13,7 @@ service-account*.json
 .vercel/
 # Real-service captures may contain owner-entered catalog or enquiry information.
 artifacts/qa/live-samples-*.png
+# Third-party reference captures are for private visual research, not redistribution.
+artifacts/reference/
+# Redesign inspection can include authenticated/private catalog information.
+artifacts/qa/revolution-*.png

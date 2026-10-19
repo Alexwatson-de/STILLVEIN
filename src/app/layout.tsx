@@ -1,5 +1,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
+import './revolution.css';
+import { CinematicAtmosphere } from '@/components/cinematic-atmosphere';
 export const dynamic = 'force-dynamic';
 import { settings } from '@/lib/server/data';
 import { defaultSettings } from '@/lib/schema';
@@ -21,6 +23,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           Skip to content
         </a>
         {children}
+        <CinematicAtmosphere />
       </body>
     </html>
   );

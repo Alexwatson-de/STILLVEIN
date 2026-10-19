@@ -111,7 +111,7 @@ export function OverviewPanel() {
                         style={{
                           flex: 1,
                           height: `${Math.max(1, (d.count / Math.max(1, ...data.series.map((x) => x.count))) * 100)}%`,
-                          background: d.count ? '#7d876b' : '#e7e9df',
+                          background: d.count ? 'var(--accent)' : 'var(--sand)',
                         }}
                       />
                     ))}
