@@ -1,0 +1,16 @@
+# Private credentials and local caches must never enter deployment uploads.
+.git
+.env*
+.secrets
+service-account*.json
+node_modules
+.next
+.firebase
+.emulator-data
+*-debug.log
+artifacts
+playwright-report
+test-results
+live-tests
+e2e
+tests

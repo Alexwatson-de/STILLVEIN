@@ -6,6 +6,7 @@ import { services, AppError } from './firebase';
 import { audit, now } from './data';
 import { idSchema } from '../schema';
 import { readImageBody } from './image-validation';
+import { MAX_IMAGE_BYTES, MAX_IMAGE_MB } from '../upload-policy';
 export function cloud() {
   const {
     CLOUDINARY_CLOUD_NAME: cloud_name,
@@ -25,11 +26,7 @@ export const uploadRequest = z.object({
   productId: idSchema,
   kind: z.enum(['gallery', 'textures', 'site']),
   mime: z.enum(['image/jpeg', 'image/png', 'image/webp']),
-  size: z
-    .number()
-    .int()
-    .positive()
-    .max(10 * 1024 * 1024),
+  size: z.number().int().positive().max(MAX_IMAGE_BYTES),
 });
 export async function authorizeUpload(input: unknown, actor: Actor) {
   const p = uploadRequest.parse(input);
@@ -127,11 +124,14 @@ export async function finalizeUpload(input: unknown, actor: Actor) {
   const resource = await c.sdk.api.resource(ticket.publicId, { resource_type: 'image' });
   if (
     !['jpg', 'jpeg', 'png', 'webp'].includes(resource.format) ||
-    resource.bytes > 10485760 ||
+    resource.bytes > MAX_IMAGE_BYTES ||
     resource.width * resource.height > 25000000 ||
     !resource.secure_url.startsWith(`https://res.cloudinary.com/${c.cloudName}/`)
   )
-    throw new AppError(400, 'Uploaded image violates the format, 10 MB or 25 megapixel limit.');
+    throw new AppError(
+      400,
+      `Uploaded image violates the format, ${MAX_IMAGE_MB} MB or 25 megapixel limit.`,
+    );
   const asset = {
     assetId: resource.asset_id,
     publicId: resource.public_id,

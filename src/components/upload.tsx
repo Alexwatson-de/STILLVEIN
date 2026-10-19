@@ -2,6 +2,7 @@
 import { useRef, useState } from 'react';
 import { Asset } from '@/lib/schema';
 import { api, clientAuth } from '@/lib/client';
+import { MAX_IMAGE_BYTES, MAX_IMAGE_MB } from '@/lib/upload-policy';
 export function Upload({
   productId,
   kind,
@@ -18,8 +19,13 @@ export function Upload({
   const xhr = useRef<XMLHttpRequest | null>(null);
   async function upload(file: File) {
     setError('');
-    if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type) || file.size > 10485760) {
-      setError('Choose a JPEG, PNG or WebP image up to 10 MB.');
+    if (
+      !['image/jpeg', 'image/png', 'image/webp'].includes(file.type) ||
+      file.size > MAX_IMAGE_BYTES
+    ) {
+      setError(
+        `Choose a JPEG, PNG or WebP image up to ${MAX_IMAGE_MB} MB. Existing images are unchanged.`,
+      );
       return;
     }
     setBusy(true);
@@ -98,8 +104,8 @@ export function Upload({
         />
       </label>
       <small className="muted">
-        JPEG, PNG or WebP · up to 10 MB / 25 MP. Server-validated and signed, then stored in
-        Cloudinary. Save the record to apply the replacement.
+        JPEG, PNG or WebP · up to {MAX_IMAGE_MB} MB / 25 MP. Server-validated and signed, then
+        stored in Cloudinary. Save the record to apply the replacement.
       </small>
       {preview && (
         <img

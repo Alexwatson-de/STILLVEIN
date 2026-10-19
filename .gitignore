@@ -10,5 +10,6 @@ test-results/
 .emulator-data/
 service-account*.json
 .secrets/
+.vercel/
 # Real-service captures may contain owner-entered catalog or enquiry information.
 artifacts/qa/live-samples-*.png

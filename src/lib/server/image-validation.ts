@@ -1,6 +1,7 @@
 import sharp from 'sharp';
 import { AppError } from './firebase';
-export const MAX_IMAGE_BYTES = 10 * 1024 * 1024;
+import { MAX_IMAGE_BYTES, MAX_IMAGE_MB } from '../upload-policy';
+export { MAX_IMAGE_BYTES } from '../upload-policy';
 const formats: Record<string, string> = {
   'image/jpeg': 'jpeg',
   'image/png': 'png',
@@ -12,7 +13,8 @@ export async function readImageBody(req: Request) {
   const mime = req.headers.get('content-type')?.split(';')[0].trim() || '';
   if (!formats[mime]) throw new AppError(400, 'Choose a JPEG, PNG or WebP image.');
   const declared = Number(req.headers.get('content-length') || 0);
-  if (declared > MAX_IMAGE_BYTES) throw new AppError(413, 'Image exceeds the 10 MB limit.');
+  if (declared > MAX_IMAGE_BYTES)
+    throw new AppError(413, `Image exceeds the ${MAX_IMAGE_MB} MB limit.`);
   if (!req.body) throw new AppError(400, 'Image data is missing.');
   const reader = req.body.getReader();
   const chunks: Buffer[] = [];
@@ -24,7 +26,7 @@ export async function readImageBody(req: Request) {
       size += value.byteLength;
       if (size > MAX_IMAGE_BYTES) {
         await reader.cancel();
-        throw new AppError(413, 'Image exceeds the 10 MB limit.');
+        throw new AppError(413, `Image exceeds the ${MAX_IMAGE_MB} MB limit.`);
       }
       chunks.push(Buffer.from(value));
     }
