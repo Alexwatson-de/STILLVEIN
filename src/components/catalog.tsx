@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { Search, Grid2X2, List, SlidersHorizontal, X } from 'lucide-react';
 import { api } from '@/lib/client';
 import { Product, Taxonomy } from '@/lib/schema';
@@ -8,8 +8,8 @@ import { filterKeys } from '@/lib/catalog';
 import { ProductCard } from './product-card';
 export function Catalog() {
   const params = useSearchParams();
-  const router = useRouter();
   const query = params.toString();
+  const urlSearch = params.get('q') || '';
   const [input, setInput] = useState(params.get('q') || '');
   const [products, setProducts] = useState<Product[]>([]);
   const [types, setTypes] = useState<Taxonomy[]>([]);
@@ -20,27 +20,37 @@ export function Catalog() {
   const [limited, setLimited] = useState(false);
   const [open, setOpen] = useState(false);
   const [retry, setRetry] = useState(0);
+  // This page fetches catalog results client-side. Native history updates are
+  // synchronous and integrate with Next's useSearchParams, avoiding stale
+  // server-navigation closures when filters change quickly on a real network.
+  function replaceQuery(s: URLSearchParams) {
+    window.history.replaceState(null, '', s.size ? `/collection?${s}` : '/collection');
+  }
+  function clearFilters() {
+    setInput('');
+    replaceQuery(new URLSearchParams());
+  }
   function change(key: string, value: string) {
-    const s = new URLSearchParams(query);
+    const s = new URLSearchParams(window.location.search);
     if (value) s.set(key, value);
     else s.delete(key);
     if (key !== 'cursor' && key !== 'view') s.delete('cursor');
-    router.replace(`/collection?${s}`, { scroll: false });
+    replaceQuery(s);
   }
   useEffect(() => {
-    setInput(params.get('q') || '');
-  }, [params]);
+    setInput(urlSearch);
+  }, [urlSearch]);
   useEffect(() => {
-    if (input === (params.get('q') || '')) return;
+    if (input === urlSearch) return;
     const timer = setTimeout(() => {
-      const s = new URLSearchParams(query);
+      const s = new URLSearchParams(window.location.search);
       if (input) s.set('q', input);
       else s.delete('q');
       s.delete('cursor');
-      router.replace(`/collection?${s}`, { scroll: false });
+      replaceQuery(s);
     }, 300);
     return () => clearTimeout(timer);
-  }, [input, params, query, router]);
+  }, [input, urlSearch]);
   useEffect(() => {
     api<Taxonomy[]>('taxonomy')
       .then(setTypes)
@@ -223,7 +233,7 @@ export function Catalog() {
           />{' '}
           Added in the last 30 days
         </label>
-        <button className="text-link" onClick={() => router.replace('/collection')}>
+        <button className="text-link" onClick={clearFilters}>
           Clear all filters <X size={14} />
         </button>
         <p className="filter-note">
@@ -272,7 +282,7 @@ export function Catalog() {
                 <Search size={32} />
                 <h2>No materials found.</h2>
                 <p>Try a broader search or remove a filter.</p>
-                <button className="button" onClick={() => router.replace('/collection')}>
+                <button className="button" onClick={clearFilters}>
                   Clear filters
                 </button>
               </div>

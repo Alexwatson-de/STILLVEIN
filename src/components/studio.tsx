@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { useSearchParams, useRouter } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { Search } from 'lucide-react';
 import { api } from '@/lib/client';
@@ -9,7 +9,6 @@ import { imageUrl, priceLabel } from '@/lib/catalog';
 import { ViewerLauncher } from './viewer-launcher';
 export function Studio() {
   const params = useSearchParams();
-  const router = useRouter();
   const [products, setProducts] = useState<Product[]>([]);
   const [product, setProduct] = useState<Product | null>(null);
   const [query, setQuery] = useState('');
@@ -42,11 +41,19 @@ export function Studio() {
   }, [query]);
   const slug = params.get('material');
   useEffect(() => {
+    const c = new AbortController();
     if (slug) {
-      api<Product>(`products/${encodeURIComponent(slug)}`)
+      setError('');
+      api<Product>(`products/${encodeURIComponent(slug)}`, { signal: c.signal })
         .then(setProduct)
-        .catch((e) => setError(e.message));
+        .catch((e) => {
+          if (e.name !== 'AbortError') {
+            setError(e.message);
+            setProduct(null);
+          }
+        });
     } else if (products[0]) setProduct(products[0]);
+    return () => c.abort();
   }, [slug, products]);
   return (
     <div className="studio-page">
@@ -64,7 +71,7 @@ export function Studio() {
           <button
             className={`studio-pick ${product?.id === p.id ? 'active' : ''}`}
             key={p.id}
-            onClick={() => router.replace(`/studio?material=${p.slug}`, { scroll: false })}
+            onClick={() => window.history.replaceState(null, '', `/studio?material=${p.slug}`)}
           >
             {p.galleryImages[0] && (
               <img src={imageUrl(p.galleryImages[0].url, 150)} alt={p.galleryImages[0].alt} />

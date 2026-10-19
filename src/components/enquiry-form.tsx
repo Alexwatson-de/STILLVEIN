@@ -110,7 +110,7 @@ export function EnquiryForm({ product }: { product?: Product }) {
         </label>
         <label>
           Quantity unit
-          <select name="unit">
+          <select name="unit" aria-label="Quantity unit">
             <option>m²</option>
             <option>ft²</option>
             <option>slabs</option>

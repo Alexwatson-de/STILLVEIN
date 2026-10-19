@@ -4,6 +4,21 @@ Date: 19 October 2026. Targets: isolated Firebase emulators, plus the optimized 
 
 ## Live-service follow-up
 
+### Requested sample catalog test
+
+Six published sample products were added through the validated server upload/domain path, with original 2048 x 2048 Cloudinary textures and Firestore references. All sample prices/specifications are explicitly illustrative. Two clearly marked synthetic enquiries remain (New and Contacted); temporary QA staff were removed, the original admin remained active, and the owner-added non-sample Granite 01 record was preserved.
+
+**Eight live browser workflows passed against the optimized real-service build**, covering sample photography/product pages; rapid search/combined filters/sort/pagination; persistent comparison; six textures and five model presets; product enquiry persistence; admin status/assignment/notes/follow-up and CSV; general-enquiry idempotency; mobile layouts and anonymous denial. Lint, type checking, production build and the production dependency audit also passed.
+
+Two findings were corrected rather than hidden by the tests:
+
+- Rapid filter changes could reuse a stale server-navigation query and restore cleared filters. Synchronous URL-history updates now merge the latest parameters without waiting for a server page navigation. Search text is only resynchronized when the URL search value changes.
+- Screenshot review caught an empty 3D frame and a loading-portal removal error that the original DOM-only check missed. Loading feedback now lives in ordinary DOM outside the suspended 3D scene, and readiness is reported only after the stone mesh draws to the visible framebuffer. Stale material fetches are cancelled. Tests wait for this render signal, check centre-canvas pixel variation for every texture/model, and assert no uncaught page errors. The final screenshot was visually inspected and shows the textured countertop.
+
+Live captures are intentionally kept out of Git because they can contain owner-entered catalog data or enquiries. Sample-seeding and live tests require explicit project confirmation; subsequent regression runs clean only the synthetic records they created.
+
+### Initial live-service setup
+
 - Real default Firestore database created in `nam5`; deny-by-default rules and composite indexes deployed. Dedicated server identity verified. Firebase billing remains disabled.
 - Approved initial admin exists in Auth and the server-managed role store, active and not disabled. Firebase accepted the password-reset/setup email request; inbox delivery was not independently observed.
 - Real Cloudinary signed preset verified. Live validation revealed that `max_file_size` is not a supported preset restriction; uploads now use server-validated binary transfer and server-side signing instead of issuing bypassable signatures.

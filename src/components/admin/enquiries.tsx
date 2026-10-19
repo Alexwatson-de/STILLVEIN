@@ -91,6 +91,7 @@ export function Enquiries() {
             <label>
               Status
               <select
+                aria-label="Status"
                 value={current.status}
                 onChange={(e) =>
                   setCurrent({ ...current, status: e.target.value as Enquiry['status'] })
@@ -104,6 +105,7 @@ export function Enquiries() {
             <label>
               Assigned to
               <select
+                aria-label="Assigned to"
                 value={current.assignedTo}
                 onChange={(e) => setCurrent({ ...current, assignedTo: e.target.value })}
               >

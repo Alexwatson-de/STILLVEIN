@@ -6,7 +6,24 @@ A standalone natural-stone catalog, specification and interactive material-visua
 
 Implemented and verified with Firebase emulators **and actual Firebase/Cloudinary services**. The dedicated `stillvein` Firebase project now has a default `nam5` database, deployed deny-by-default rules/indexes, a scoped server identity and the approved initial administrator. Billing remains disabled. Real browser gallery/texture uploads, Cloudinary delivery, Firestore references, interactive 3D rendering and safe cleanup passed a live-service smoke test.
 
-Source repository: https://github.com/Alexwatson-de/STILLVEIN. The optimized app runs locally at http://localhost:3000 using the real services; it is **not publicly hosted**. The real catalog starts empty after synthetic test cleanup. Use the explicit `:local` scripts for the separate sample database. Hosting approval, domain/HTTPS setup, policy review and hosted acceptance checks remain release gates.
+Source repository: https://github.com/Alexwatson-de/STILLVEIN. The optimized app runs locally at http://localhost:3000 using the real services; it is **not publicly hosted**. At the owner's request, six clearly labelled sample materials with real Cloudinary textures and two synthetic enquiries are now retained in the connected database. Owner-entered materials are preserved. The separate emulator sample database remains available via `:local` scripts. Hosting approval, domain/HTTPS setup, policy review and hosted acceptance checks remain release gates.
+
+### Connected sample demonstration
+
+The sample collection includes Linen Vein, Silver Grain, Midnight Mineral, Soft Strata, Rose Aggregate and Quiet Granite. Prices, finishes, dimensions and application suggestions are illustrative, not commercial quotations. Two synthetic enquiries demonstrate New and Contacted states; their names/messages explicitly identify them as SAMPLE / QA ONLY.
+
+Eight additional live-service browser workflows passed against the optimized server. They cover public pages, rapid combined filters, search/sorting/pagination, comparison, all six textures and five 3D presets, enquiry persistence/retry, admin notes/assignment/follow-up/CSV, mobile layout and anonymous access denial. The viewer test waits for an actual mesh draw and rejects a uniform empty canvas; checking for a canvas element alone is insufficient.
+
+Explicit opt-in maintenance commands (never run against an unrelated project):
+
+```sh
+CONFIRM_PROJECT=stillvein INCLUDE_SAMPLE_DATA=1 \
+  SEED_ADMIN_EMAIL='approved-admin@example.com' npx tsx scripts/seed-live-samples.ts
+CONFIRM_PROJECT=stillvein TEST_ADMIN_EMAIL='approved-admin@example.com' \
+  npx playwright test --config playwright.live.config.ts
+```
+
+The initializer is additive and skips existing sample records; it never replaces owner materials or existing branding. Regression runs remove their own temporary staff/enquiries by default. Set `KEEP_SAMPLE_ENQUIRIES=1` only when intentionally retaining a successful run's synthetic enquiries. Existing retained demo enquiries are not removed by later regression runs. Live-service screenshots/traces stay local and are Git-ignored because they can include user-entered information.
 
 - Public: editorial homepage, database-backed collection, debounced search, composable URL filters, grid/list views, sorting, cursor pagination, product gallery/zoom, pricing/specifications, comparison, specification download, enquiries, SEO and public policies.
 - Studio: lazy-loaded React Three Fiber, slab/vertical/countertop/floor/wall presets, physical-scale UVs, aspect-aware repetition, texture rotation, roughness/reflectivity, studio backgrounds, environment lighting, contact shadows, camera/reset/zoom/fullscreen, touch orbit, failure boundaries and image fallback. It maps photographs onto reusable forms; it is **not 3D scanning**.

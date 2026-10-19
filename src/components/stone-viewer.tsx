@@ -1,10 +1,18 @@
 'use client';
-import { Component, ReactNode, Suspense, useEffect, useMemo, useRef, useState } from 'react';
+import {
+  Component,
+  ReactNode,
+  Suspense,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { Canvas, useThree } from '@react-three/fiber';
 import {
   ContactShadows,
   Environment,
-  Html,
   Lightformer,
   OrbitControls,
   useTexture,
@@ -16,18 +24,31 @@ import { Product, Visualization, models } from '@/lib/schema';
 import { imageUrl } from '@/lib/catalog';
 import { modelDimensions, textureRepeat } from '@/lib/visualization';
 class ViewerBoundary extends Component<
-  { children: ReactNode; fallback: ReactNode },
+  { children: ReactNode; fallback: ReactNode; onError?: () => void },
   { error: boolean }
 > {
   state = { error: false };
   static getDerivedStateFromError() {
     return { error: true };
   }
+  componentDidCatch() {
+    this.props.onError?.();
+  }
   render() {
     return this.state.error ? this.props.fallback : this.props.children;
   }
 }
-function Stone({ product, settings: s }: { product: Product; settings: Visualization }) {
+function Stone({
+  product,
+  settings: s,
+  renderKey,
+  onRendered,
+}: {
+  product: Product;
+  settings: Visualization;
+  renderKey: string;
+  onRendered: (key: string) => void;
+}) {
   const url = imageUrl(
     product.texture!.url,
     typeof window !== 'undefined' && window.innerWidth < 700 ? 1024 : 2048,
@@ -87,7 +108,16 @@ function Stone({ product, settings: s }: { product: Product; settings: Visualiza
   const y = s.model === 'countertop' ? 0.9 : dims[1] / 2 + 0.06;
   return (
     <group>
-      <mesh geometry={geometry} position={[0, y, 0]} castShadow receiveShadow>
+      <mesh
+        geometry={geometry}
+        position={[0, y, 0]}
+        castShadow
+        receiveShadow
+        onAfterRender={(renderer) => {
+          // Only the visible canvas draw counts, not environment/shadow render targets.
+          if (renderer.getRenderTarget() === null) onRendered(renderKey);
+        }}
+      >
         <meshPhysicalMaterial
           map={texture}
           roughness={s.roughness}
@@ -175,6 +205,14 @@ export default function StoneViewer({
   const [zoom, setZoom] = useState(0);
   const [lost, setLost] = useState(false);
   const [message, setMessage] = useState('');
+  const [renderedKey, setRenderedKey] = useState('');
+  const lastRendered = useRef('');
+  const renderKey = `${product.id}:${product.texture?.assetId || 'none'}:${settings.model}`;
+  const markRendered = useCallback((key: string) => {
+    if (lastRendered.current === key) return;
+    lastRendered.current = key;
+    setRenderedKey(key);
+  }, []);
   const root = useRef<HTMLDivElement>(null);
   useEffect(() => {
     try {
@@ -213,7 +251,11 @@ export default function StoneViewer({
   if (!product.texture || supported === false || lost) return fallback;
   const backgrounds = { neutral: '#e6e5dd', warm: '#ded3bd', dark: '#282c28' };
   return (
-    <div className="viewer" ref={root}>
+    <div
+      className="viewer"
+      ref={root}
+      data-render-state={renderedKey === renderKey ? 'ready' : 'loading'}
+    >
       <div className="canvas-wrap">
         <div
           className="viewer-watermark"
@@ -224,7 +266,11 @@ export default function StoneViewer({
         {supported === null ? (
           <div className="empty">Preparing your studio…</div>
         ) : (
-          <ViewerBoundary key={product.texture.assetId} fallback={fallback}>
+          <ViewerBoundary
+            key={product.texture.assetId}
+            fallback={fallback}
+            onError={() => setLost(true)}
+          >
             <Canvas
               frameloop="demand"
               shadows
@@ -258,23 +304,13 @@ export default function StoneViewer({
                 shadow-camera-bottom={-5}
               />
               <directionalLight position={[-4, 2, -2]} intensity={0.7} />
-              <Suspense
-                fallback={
-                  <Html center>
-                    <span
-                      style={{
-                        whiteSpace: 'nowrap',
-                        background: '#f6f5f1',
-                        padding: 12,
-                        fontSize: 12,
-                      }}
-                    >
-                      Loading stone texture…
-                    </span>
-                  </Html>
-                }
-              >
-                <Stone product={product} settings={settings} />
+              <Suspense fallback={null}>
+                <Stone
+                  product={product}
+                  settings={settings}
+                  renderKey={renderKey}
+                  onRendered={markRendered}
+                />
                 <Environment resolution={128} frames={1}>
                   <Lightformer
                     position={[0, 5, -3]}
@@ -303,6 +339,23 @@ export default function StoneViewer({
               <Camera preset={settings.camera} reset={reset} zoom={zoom} />
             </Canvas>
           </ViewerBoundary>
+        )}
+        {supported && renderedKey !== renderKey && (
+          <div
+            role="status"
+            style={{
+              position: 'absolute',
+              inset: 0,
+              display: 'grid',
+              placeItems: 'center',
+              pointerEvents: 'none',
+              zIndex: 3,
+            }}
+          >
+            <span style={{ background: '#f6f5f1', padding: 12, fontSize: 12 }}>
+              Loading stone texture…
+            </span>
+          </div>
         )}
         <span className="viewer-hint">Drag to rotate · Scroll or pinch to zoom</span>
       </div>
